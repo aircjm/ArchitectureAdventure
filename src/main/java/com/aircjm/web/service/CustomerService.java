@@ -29,33 +29,9 @@ public class CustomerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
     public List<Customer> getCustomerList() {
-        Connection connection = null;
-        try {
-            List<Customer> customerList = new ArrayList<Customer>();
-            String sql = "select * from customer";
-            // connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            connection = DatabaseHelper.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-                Customer customer = new Customer();
-                customer.setId(resultSet.getLong("id"));
-                customer.setName(resultSet.getString("name"));
-                customer.setContact(resultSet.getString("contact"));
-                customer.setTelephone(resultSet.getString("telephone"));
-                customer.setEmail(resultSet.getString("email"));
-                customer.setRemark(resultSet.getString("remark"));
-                customerList.add(customer);
-            }
-            return customerList;
-
-        } catch (SQLException e) {
-            LOGGER.error("execute MYSQL error ", e);
-        } finally {
-            DatabaseHelper.closeConnection(connection);
-        }
-        return null;
+        Connection connection = DatabaseHelper.getConnection();
+        String sql = "select * from customer";
+        return DatabaseHelper.queryEntityList(Customer.class, sql, null);
     }
 
     public List<Customer> getCustomerList(String keyword) {
