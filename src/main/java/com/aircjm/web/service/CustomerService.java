@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.aircjm.web.helper.DatabaseHelper;
 import com.aircjm.web.model.Customer;
 import com.aircjm.web.util.PropsUtil;
 import org.slf4j.Logger;
@@ -27,36 +28,13 @@ public class CustomerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
-    private static final String DRIVER;
-
-    private static final String URL;
-
-    private static final String USERNAME;
-
-    private static final String PASSWORD;
-
-    static {
-        Properties conf = PropsUtil.LoadProps("config.properties");
-
-        DRIVER = conf.getProperty("jdbc.driver");
-        URL = conf.getProperty("jdbc.url");
-        USERNAME = conf.getProperty("jdbc.username");
-        PASSWORD = conf.getProperty("jdbc.password");
-
-        try {
-            Class.forName(DRIVER);
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("can not load jdbc driver", e);
-        }
-    }
-
     public List<Customer> getCustomerList() {
         Connection connection = null;
         try {
             List<Customer> customerList = new ArrayList<Customer>();
             String sql = "select * from customer";
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-
+            // connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            connection = DatabaseHelper.getConnection();
             PreparedStatement statement = connection.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
 
@@ -74,14 +52,8 @@ public class CustomerService {
 
         } catch (SQLException e) {
             LOGGER.error("execute MYSQL error ", e);
-        }finally {
-            if (connection != null){
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    LOGGER.error("close connection failure", e);
-                }
-            }
+        } finally {
+            DatabaseHelper.closeConnection(connection);
         }
         return null;
     }
