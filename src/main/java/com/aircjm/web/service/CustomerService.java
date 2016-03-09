@@ -1,6 +1,3 @@
-/****************************************************************************************
- *
- ****************************************************************************************/
 package com.aircjm.web.service;
 
 import java.net.ConnectException;
@@ -22,7 +19,6 @@ import org.slf4j.LoggerFactory;
 /**
  * <提供客户数据服务> <br>
  *
- * @author chenjiaming<br>
  * @version 1.0<br>
  * @taskId <br>
  * @CreateDate 2016/3/6 <br>

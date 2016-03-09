@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 /**
  * <Description> <br>
  *
- * @author chenjiaming<br>
  * @version 1.0<br>
  * @taskId <br>
  * @CreateDate 2016/3/6 <br>
