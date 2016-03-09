@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
  * @taskId <br>
  * @CreateDate 2016/3/6 <br>
  */
-public class ProsUtil {
+public class PropsUtil {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ProsUtil.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(PropsUtil.class);
 
     /**
      * 加载属性文件
