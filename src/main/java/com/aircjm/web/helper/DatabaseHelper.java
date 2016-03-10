@@ -29,6 +29,7 @@ public final class DatabaseHelper {
 
     public static final QueryRunner QUERY_RUNNER = new QueryRunner();
 
+    public static final ThreadLocal<Connection> CONNECTION_THREAD_LOCAL = new ThreadLocal<Connection>();
 
     private static final String DRIVER;
 
@@ -59,12 +60,16 @@ public final class DatabaseHelper {
      * @return
      */
     public static Connection getConnection() {
-        Connection connection = null;
-
-        try {
-            connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-        } catch (SQLException e) {
-            LOGGER.error("get Connection failure", e);
+        Connection connection = CONNECTION_THREAD_LOCAL.get();
+        if (connection == null){
+            try {
+                connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            } catch (SQLException e) {
+                LOGGER.error("get Connection failure", e);
+                throw new RuntimeException(e);
+           } finally {
+                CONNECTION_THREAD_LOCAL.set(connection);
+            }
         }
         return connection;
     }
@@ -83,6 +88,20 @@ public final class DatabaseHelper {
         }
     }
 
+    public static void closeConnection(){
+        Connection conn = CONNECTION_THREAD_LOCAL.get();
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                LOGGER.error("close Connection error", e);
+                throw new RuntimeException(e);
+            }finally {
+                //使用完之后移除Connection
+                CONNECTION_THREAD_LOCAL.remove();
+            }
+        }
+    }
 
     /**
      * 查询实体列表
@@ -101,7 +120,7 @@ public final class DatabaseHelper {
             LOGGER.error("query list failure", e);
             throw new RuntimeException(e);
         } finally {
-            closeConnection(connection);
+            closeConnection();
         }
         return entityList;
     }
